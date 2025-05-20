@@ -1,0 +1,169 @@
+import random
+
+class Seagull:
+    MAX = 10
+    MIN = 0
+    MAX_ACTIONS_PER_DAY = 3
+    MAX_DAYS = 12
+
+    def __init__(self, name: str):
+        self.name = name
+        self.day = 1
+        self.life = 5
+        self.stamina = 5
+        self.health = 5
+        self.skill = 5
+        self.actions_today = 0
+        self.stats_today = {"chips": 0, "fish": 0, "fly": 0, "walk": 0, "idle": 0}
+
+    def next_day(self):
+        self.day += 1
+        self.actions_today = 0
+        self.stats_today = {key: 0 for key in self.stats_today}
+
+        # 每天恢复 2 点 Stamina（体力）
+        stamina_recovered = min(2, self.MAX - self.stamina)
+        self.stamina = min(self.stamina + 2, self.MAX)
+
+        print(f"\n🌅 A new day begins... (+{stamina_recovered} Stamina)\n")
+        self.print_seagull_meme()
+
+        if self.day > self.MAX_DAYS:
+            print("📆 You've reached Day 12. The journey ends here.")
+            print("🌟 Your seagull legacy will echo across Manly Beach.")
+            exit()
+
+    def can_act(self):
+        return self.actions_today < self.MAX_ACTIONS_PER_DAY
+
+    def act(self, action: str):
+        if not self.can_act():
+            print("🕒 You've used all actions today. End the day to continue.")
+            return
+
+        self.actions_today += 1
+        if action in self.stats_today:
+            self.stats_today[action] += 1
+
+        # 执行行为逻辑
+        if action == "chips":
+            self.life_up()
+            self.health_down()
+            self.stamina_down()
+            print(f"{self.name} munches on spicy chips... +Life, -Health, -Stamina")
+        elif action == "fish":
+            self.life_up()
+            self.health_up()
+            self.stamina_down()
+            print(f"{self.name} catches a fish! +Life, +Health, -Stamina")
+            self.fish_event()
+        elif action == "fly":
+            self.life_down()
+            self.stamina_down()
+            self.skill_up()
+            print(f"{self.name} flies a long distance... -Life, -Stamina, +Skill")
+            self.fly_event()
+        elif action == "walk":
+            self.life_down()
+            self.stamina_down()
+            print(f"{self.name} explores the city... -Life, -Stamina")
+            self.city_event()
+        elif action == "idle":
+            self.stamina_up()
+            print(f"{self.name} does nothing. Peaceful. +Stamina")
+        elif action == "end":
+            print("🕓 Ending the day early...")
+            self.actions_today = self.MAX_ACTIONS_PER_DAY
+        else:
+            print("❌ Invalid action.")
+            return
+
+        self.check_status()
+
+    def fish_event(self):
+        if random.random() < 0.3:
+            print("🍔 SpongeBob appears and gives you a Krabby Patty! +1 Health")
+            self.health_up()
+
+    def fly_event(self):
+        if random.random() < 0.3:
+            print("👽 You meet an alien seagull! It trains you. +2 Skill")
+            self.skill_up()
+            self.skill_up()
+
+    def city_event(self):
+        if random.random() < 0.3:
+            print("🚗 CAR ACCIDENT! You got hit while walking. -2 Life")
+            self.life_down()
+            self.life_down()
+
+    def check_status(self):
+        for attr, label in [("life", "Life"), ("stamina", "Stamina"), ("health", "Health")]:
+            value = getattr(self, attr)
+            if value == 0:
+                print(f"💀 {label} dropped to 0. {self.name} has perished.")
+                exit()
+            elif value == 3:
+                warnings = {
+                    "Life": "⚠️ You're feeling weak...",
+                    "Stamina": "⚠️ You need energy soon!",
+                    "Health": "⚠️ Stop eating human junk food!"
+                }
+                print(warnings[label])
+            elif value == 10:
+                print(f"🏆 You're the healthiest seagull in Sydney! ({label})")
+
+        if self.skill == 10:
+            print("🌟 You're the most skilled seagull on the beach!")
+
+    def modify_stat(self, stat, change):
+        current = getattr(self, stat)
+        setattr(self, stat, max(self.MIN, min(self.MAX, current + change)))
+
+    # 属性操作函数
+    def life_up(self):     self.life = min(self.life + 1, self.MAX)
+    def life_down(self):   self.life = max(self.life - 1, self.MIN)
+    def stamina_up(self):  self.stamina = min(self.stamina + 1, self.MAX)
+    def stamina_down(self):self.stamina = max(self.stamina - 1, self.MIN)
+    def health_up(self):   self.health = min(self.health + 1, self.MAX)
+    def health_down(self): self.health = max(self.health - 1, self.MIN)
+    def skill_up(self):    self.skill = min(self.skill + 1, self.MAX)
+
+    def display_state(self):
+        print(f"\n===== DAY {self.day} =====")
+        print(f"Seagull Name: {self.name}")
+        self.display_bar(self.life, "Life")
+        self.display_bar(self.stamina, "Stamina")
+        self.display_bar(self.health, "Health")
+        self.display_bar(self.skill, "Skill")
+        print(f"Actions today: {self.actions_today}/{self.MAX_ACTIONS_PER_DAY}")
+        print("=========================\n")
+
+    @staticmethod
+    def display_bar(value: int, label: str):
+        filled = '█' * value
+        empty = '░' * (10 - value)
+        print(f"{label:>8}: {filled}{empty} {value * 10}%")
+
+    def print_seagull_meme(self):
+        ascii_gull = r"""
+       __      
+ \__( o)>     
+   \___)      
+     ||_       
+        """
+        quotes = [
+            "Not all fries are worth dying for.",
+            "I dove, I pecked, I conquered.",
+            "Calories don’t count if they fall from the sky.",
+            "One man’s trash is a seagull’s buffet.",
+            "I am inevitable. I am Steven the Seagull.",
+            "Fish today, fly tomorrow.",
+            "Even SpongeBob respects me now.",
+            "🧂Too salty? Never.",
+            "I once stole chips from a tourist... legendary.",
+            "Beak sharp, wings ready."
+        ]
+        print(ascii_gull)
+        print(f"🗨️  {random.choice(quotes)}\n")
+
