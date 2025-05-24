@@ -1,1 +1,0 @@
-Seagull Simulator is a light-hearted and humorous text game in which the player plays a seagull living on Manly Beach in Australia. Through daily action choices, you need to manage your health, stamina, health and skills, avoid various emergencies, and continue to grow, eventually becoming "the healthiest and most powerful seagull in Sydney."
