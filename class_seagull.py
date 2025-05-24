@@ -1,5 +1,8 @@
 import random
+from class_table import Table
+from art import render_table, render_seagull_meme, render_intro, render_game_end
 
+# Seagull class - game logic for actions and stats
 class Seagull:
     MAX = 10
     MIN = 0
@@ -7,6 +10,7 @@ class Seagull:
     MAX_DAYS = 12
 
     def __init__(self, name: str):
+        render_intro()  # show welcome message
         self.name = name
         self.day = 1
         self.life = 5
@@ -20,17 +24,14 @@ class Seagull:
         self.day += 1
         self.actions_today = 0
         self.stats_today = {key: 0 for key in self.stats_today}
-
-        # 每天恢复 2 点 Stamina（体力）
-        stamina_recovered = min(2, self.MAX - self.stamina)
+        recovered = min(2, self.MAX - self.stamina)
         self.stamina = min(self.stamina + 2, self.MAX)
-
-        print(f"\n🌅 A new day begins... (+{stamina_recovered} Stamina)\n")
-        self.print_seagull_meme()
-
+        print(f"\n🌅 A new day begins... (+{recovered} Stamina)\n")
+        render_seagull_meme()  # show seagull quote
         if self.day > self.MAX_DAYS:
             print("📆 You've reached Day 12. The journey ends here.")
             print("🌟 Your seagull legacy will echo across Manly Beach.")
+            render_game_end()
             exit()
 
     def can_act(self):
@@ -45,32 +46,50 @@ class Seagull:
         if action in self.stats_today:
             self.stats_today[action] += 1
 
-        # 执行行为逻辑
+        # handle different actions
         if action == "chips":
-            self.life_up()
-            self.health_down()
+            table = Table()
+            table.place_fries()
+            flavor = table.get_fries()
+            render_table(flavor)
+            if flavor == 'Original':
+                self.life_up()
+                self.health_down()
+            elif flavor == 'Sichuan Chili':
+                self.life_up()
+                self.health_down()
+                self.health_down()
+            elif flavor == 'Beef Gravy':
+                self.life_up()
+                self.life_up()
+                self.health_down()
             self.stamina_down()
-            print(f"{self.name} munches on spicy chips... +Life, -Health, -Stamina")
+            print(f"{self.name} eats the {flavor} fries... [Effects applied based on flavor]\n")
+
         elif action == "fish":
             self.life_up()
             self.health_up()
             self.stamina_down()
             print(f"{self.name} catches a fish! +Life, +Health, -Stamina")
             self.fish_event()
+
         elif action == "fly":
             self.life_down()
             self.stamina_down()
             self.skill_up()
             print(f"{self.name} flies a long distance... -Life, -Stamina, +Skill")
             self.fly_event()
+
         elif action == "walk":
             self.life_down()
             self.stamina_down()
             print(f"{self.name} explores the city... -Life, -Stamina")
             self.city_event()
+
         elif action == "idle":
             self.stamina_up()
             print(f"{self.name} does nothing. Peaceful. +Stamina")
+
         elif action == "end":
             print("🕓 Ending the day early...")
             self.actions_today = self.MAX_ACTIONS_PER_DAY
@@ -80,6 +99,7 @@ class Seagull:
 
         self.check_status()
 
+    # special events
     def fish_event(self):
         if random.random() < 0.3:
             print("🍔 SpongeBob appears and gives you a Krabby Patty! +1 Health")
@@ -97,30 +117,23 @@ class Seagull:
             self.life_down()
             self.life_down()
 
+    # check stat values after action
     def check_status(self):
         for attr, label in [("life", "Life"), ("stamina", "Stamina"), ("health", "Health")]:
             value = getattr(self, attr)
             if value == 0:
                 print(f"💀 {label} dropped to 0. {self.name} has perished.")
+                render_game_end()
                 exit()
             elif value == 3:
-                warnings = {
-                    "Life": "⚠️ You're feeling weak...",
-                    "Stamina": "⚠️ You need energy soon!",
-                    "Health": "⚠️ Stop eating human junk food!"
-                }
-                print(warnings[label])
+                print(f"⚠️ {label} is getting low!")
             elif value == 10:
-                print(f"🏆 You're the healthiest seagull in Sydney! ({label})")
+                print(f"🏆 Maxed out {label}!")
 
         if self.skill == 10:
             print("🌟 You're the most skilled seagull on the beach!")
 
-    def modify_stat(self, stat, change):
-        current = getattr(self, stat)
-        setattr(self, stat, max(self.MIN, min(self.MAX, current + change)))
-
-    # 属性操作函数
+    # stat changes
     def life_up(self):     self.life = min(self.life + 1, self.MAX)
     def life_down(self):   self.life = max(self.life - 1, self.MIN)
     def stamina_up(self):  self.stamina = min(self.stamina + 1, self.MAX)
@@ -129,6 +142,7 @@ class Seagull:
     def health_down(self): self.health = max(self.health - 1, self.MIN)
     def skill_up(self):    self.skill = min(self.skill + 1, self.MAX)
 
+    # show status bars
     def display_state(self):
         print(f"\n===== DAY {self.day} =====")
         print(f"Seagull Name: {self.name}")
@@ -144,26 +158,3 @@ class Seagull:
         filled = '█' * value
         empty = '░' * (10 - value)
         print(f"{label:>8}: {filled}{empty} {value * 10}%")
-
-    def print_seagull_meme(self):
-        ascii_gull = r"""
-       __      
- \__( o)>     
-   \___)      
-     ||_       
-        """
-        quotes = [
-            "Not all fries are worth dying for.",
-            "I dove, I pecked, I conquered.",
-            "Calories don’t count if they fall from the sky.",
-            "One man’s trash is a seagull’s buffet.",
-            "I am inevitable. I am Steven the Seagull.",
-            "Fish today, fly tomorrow.",
-            "Even SpongeBob respects me now.",
-            "🧂Too salty? Never.",
-            "I once stole chips from a tourist... legendary.",
-            "Beak sharp, wings ready."
-        ]
-        print(ascii_gull)
-        print(f"🗨️  {random.choice(quotes)}\n")
-
