@@ -69,7 +69,7 @@ Can you make it through all 12 days?
 ```
 ===== DAY 3 =====
 Seagull Name: Wingston
-   Life: █████░░░░░ 50%
+   Life:  █████░░░░░ 50%
  Stamina: ████░░░░░░ 40%
   Health: ██████░░░░ 60%
    Skill: ███████░░░ 70%
