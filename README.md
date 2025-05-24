@@ -31,7 +31,7 @@ Can you make it through all 12 days?
 
 ## How to Play
 
-1. Clone this repository:
+1. Download files or clone this repository:
    ```bash
    git clone https://github.com/TiantianSunday/seagull-simulator.git
    cd seagull-simulator
