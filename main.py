@@ -1,8 +1,15 @@
-from class1 import Seagull
+from class_seagull import Seagull
 
 def create_seagull() -> Seagull:
     name = input("You are a strong seagull living near Manly Beach.\nWhat's your name? ")
     return Seagull(name)
+
+def print_day_summary(seagull: Seagull):
+    print("\n📊 Daily Summary:")
+    for action, count in seagull.stats_today.items():
+        if count > 0:
+            print(f" - {action.capitalize()}: {count} time(s)")
+    print()
 
 def main():
     seagull = create_seagull()
@@ -37,20 +44,12 @@ def main():
             seagull.act("idle")
         elif choice == "0":
             seagull.act("end")
-        elif choice == "end":  # 隐藏指令
-            print("🔒 You chose to end the game manually.")
-            print("🕊️ Goodbye, brave seagull.")
+        elif choice == "end":
+            print("You chose to end the game manually.")
+            print("Goodbye, brave seagull.")
             break
         else:
             print("❌ Invalid input.")
 
-def print_day_summary(seagull: Seagull):
-    print("\n📊 Daily Summary:")
-    for action, count in seagull.stats_today.items():
-        if count > 0:
-            print(f" - {action.capitalize()}: {count} time(s)")
-    print()
-
 if __name__ == "__main__":
     main()
-
