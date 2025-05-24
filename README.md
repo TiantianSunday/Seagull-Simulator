@@ -33,7 +33,7 @@ Can you make it through all 12 days?
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/your-username/seagull-simulator.git
+   git clone https://github.com/TiantianSunday/seagull-simulator.git
    cd seagull-simulator
    ```
 
