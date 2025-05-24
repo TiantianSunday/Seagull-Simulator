@@ -1,6 +1,6 @@
 #  Seagull Simulator
 
-**Live your best bird life — one flap at a time.**
+**Let's go to the dock for some chips!**
 
 ## Game Description
 
